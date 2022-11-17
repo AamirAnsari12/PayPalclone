@@ -1,0 +1,62 @@
+public class PDFGenerateCtrl {
+    public passbook__c pass{get;set;}
+    public String currentRecordId{get;set;}
+ 
+    public PDFGenerateCtrl(){
+        currentRecordId  = ApexPages.CurrentPage().getparameters().get('id');
+        if(currentRecordId != null && String.isNotBlank(currentRecordId)){
+            pass = [SELECT Id, Name,amount__c,Datetime__c FROM passbook__c WHERE Id =:currentRecordId];
+        }
+    }
+ 
+    @AuraEnabled(cacheable=true)
+    public static List<passbook__c> fetchRecords(){
+        try {
+            List<passbook__c> passList = new List<passbook__c>();
+ 
+            passList = [Select id, Name,amount__c from passbook__c];              
+            return passList;
+        } catch (Exception e) {
+            System.debug('Exception: '+e.getMessage());
+            return null;
+        }
+    }
+ 
+    @AuraEnabled
+    public static String sendPdf(String passId) {
+        PageReference pdf = new pagereference('/apex/ContactDataPDF?id='+passId);
+        pdf.getParameters().put('id', passId);
+     
+        Blob body;
+        try {
+            // returns page as a PDF
+            body = pdf.getContent();
+        } catch (Exception e) {
+            body = Blob.valueOf('data');
+        }
+ 
+        //insert content version
+        ContentVersion CV = new ContentVersion();
+        CV.Title = 'PassBookTransactions.pdf';
+        CV.PathOnClient = 'PassBookTransactions.pdf';
+        CV.VersionData = body;
+        CV.FirstPublishLocationId = passId;
+        insert CV;
+         
+        Messaging.EmailFileAttachment attach = new Messaging.EmailFileAttachment();
+        attach.setContentType('application/pdf');
+        attach.setFileName('PassBookTransactions.pdf');
+        attach.Body = body;
+ 
+        Messaging.SingleEmailMessage mail = new Messaging.SingleEmailMessage();
+        mail.setToAddresses(new String[] {'aamir.ansari@capgemini.com'});
+        mail.setSubject('Generate PDF from Salesforce');
+        mail.setHtmlBody('Generate PDF from Salesforce');
+        //mail.setHtmlBody('Name:- '+pass.Name);
+        //mail.setHtmlBody('Amount:-+pass.amount__c');
+        mail.setFileAttachments(new Messaging.EmailFileAttachment[] {attach}); 
+        // Send the email
+        Messaging.sendEmail(new Messaging.SingleEmailMessage[] {mail});
+        return 'Email sent Successfully with PDF.';
+   }
+}
