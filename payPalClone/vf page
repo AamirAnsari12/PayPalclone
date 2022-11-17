@@ -1,0 +1,11 @@
+<apex:page Controller="PDFGenerateCtrl" renderAs="pdf">
+   
+  <h1>Passbook</h1>
+    <p>
+        <b> Name:- {! pass.Name}</b>
+    </p>
+        <p>
+        <b> Amount:- {! pass.amount__c}</b>
+    </p>
+
+</apex:page>
