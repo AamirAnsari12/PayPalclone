@@ -1,0 +1,47 @@
+<template>
+    <div class="slds-tabs_card">
+        <div class="slds-page-header">
+            <div class="slds-page-header__row">
+                <div class="slds-page-header__col-title">
+                    <div class="slds-media">
+                        <div class="slds-media__figure">
+                            <span class="slds-icon_container slds-icon-standard-opportunity">
+                                 <lightning-icon icon-name="standard:recipe" alternative-text="recipe" title="recipe"></lightning-icon>
+                            </span>
+                        </div>
+                        <div class="slds-media__body">
+                            <div class="slds-page-header__name">
+                                <div class="slds-page-header__name-title">
+                                    <h1>
+                                        <span>Generate PDF from Apex Salesforce</span>
+                                        <span class="slds-page-header__title slds-truncate" title="Recently Viewed">TechDicer</span>
+                                    </h1>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div> <br/>
+    <!-- Start Card for Combobox -->
+    <lightning-card  variant="Narrow"  title="Generate PDF from Apex Salesforce" icon-name="standard:account">
+        <div class="slds-p-horizontal_medium">
+            <lightning-combobox name="types"
+                                label="Type"
+                                value={value} 
+                                options={typeOptions} 
+                                onchange={handleTypeChange}> 
+            </lightning-combobox>
+            <br/> 
+        </div>
+        <div>
+            <lightning-button variant="brand" label="Generate PDF And Send Email"
+                              title="Primary action"
+                              onclick={generatePDF} 
+                              class="slds-m-left_x-small">
+            </lightning-button>
+        </div>
+    </lightning-card>
+    <!---------------------->
+</template>
